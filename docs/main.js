@@ -1,5 +1,4 @@
 import Chrono from '../dist/chrono.modern.mjs'
-import './style.css'
 
 function onFrame(time, deltaTime) {
   console.log(time, deltaTime)
