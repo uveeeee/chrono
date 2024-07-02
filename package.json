@@ -2,6 +2,7 @@
   "name": "@uveee/chrono",
   "version": "0.1.0",
   "description": "A library to manage requestAnimationFrame loops with priorities",
+  "private": false,
   "files": [
     "dist"
   ],
