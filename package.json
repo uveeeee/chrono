@@ -1,0 +1,44 @@
+{
+  "name": "@uveee/chrono",
+  "version": "0.1.0",
+  "description": "A library to manage requestAnimationFrame loops with priorities",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "source": "src/index.js",
+  "main": "dist/chrono.js",
+  "umd:main": "dist/chrono.umd.js",
+  "module": "dist/chrono.mjs",
+  "types": "dist/types/index.d.ts",
+  "exports": {
+    "require": "./dist/chrono.js",
+    "types": "./dist/types/index.d.ts",
+    "default": "./dist/chrono.modern.mjs"
+  },
+  "scripts": {
+    "dev": "vite",
+    "clean": "rimraf dist",
+    "build": "npm-run-all --parallel clean build:dist build:types",
+    "build:types": "tsc --allowJs -d --emitDeclarationOnly --declarationDir ./dist/types --removeComments ./src/index.js",
+    "build:dist": "microbundle build -i src/ --o ./dist"
+  },
+
+  "keywords": [
+    "requestAnimationFrame",
+    "animation",
+    "performance",
+    "javascript",
+    "priority"
+  ],
+  "author": "Uve <sergiovv0110@gmail.com>",
+  "license": "MIT",
+
+  "devDependencies": {
+    "microbundle": "^0.15.1",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^4.4.0",
+    "typescript": "^5.0.2",
+    "vite": "^4.2.1"
+  }
+}
