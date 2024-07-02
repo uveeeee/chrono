@@ -6,6 +6,10 @@
   "files": [
     "dist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uvee-dev/chrono.git"
+  },
   "sideEffects": false,
   "source": "src/index.js",
   "main": "dist/chrono.js",

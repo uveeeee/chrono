@@ -51,18 +51,5 @@ Chrono.add((time, deltaTime) => {
 }, 0);
 ```
 
-### React
-```jsx
-import { useFrame } from '@uveee/chrono';
-
-function Component() {
-  useFrame((time, deltaTime) => {
-    console.log(`Time: ${time}, Delta Time: ${deltaTime}`);
-  });
-
-  return <div>Your component content</div>;
-}
-```
-
 ### Support 
 If you find this project helpful, please consider giving it a star on GitHub!
