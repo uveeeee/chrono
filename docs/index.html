@@ -1,12 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chrono Docs</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/main.js"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chrono.js Library Documentation</title>
+  <style>
+    body { font-family: sans-serif; line-height: 1.6; padding: 20px; max-width: 900px; margin: 0 auto; }
+    header, section, article { margin-bottom: 20px; }
+    h1, h2, h3 { color: #333; }
+    pre { background-color: #f4f4f4; padding: 15px; border-radius: 4px; overflow-x: auto; }
+    code { font-family: monospace; }
+    dt { font-weight: bold; margin-top: 10px; }
+    dd { margin-left: 20px; margin-bottom: 10px; }
+    nav ul { list-style-type: none; padding: 0; }
+    nav ul li { display: inline; margin-right: 15px; }
+    nav a { text-decoration: none; color: #007bff; }
+    nav a:hover { text-decoration: underline; }
+    footer { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Chrono.js</h1>
+  </header>
+
+  <nav>
+    <ul>
+      <li><a href="#introduction">Introduction</a></li>
+      <li><a href="#installation">Installation</a></li>
+      <li><a href="#api">API Reference</a></li>
+      <li><a href="#usage">Usage Examples</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <article id="introduction">
+      <h2>Introduction</h2>
+      <p>Chrono.js is a JavaScript library for merging `requestAnimationFrame` (rAF) loops for better performance and control over execution priority. It allows multiple callbacks to be registered to a single rAF loop, ensuring they are executed in a defined order based on priority. This helps in orchestrating animations and other frame-by-frame updates efficiently, preventing layout thrashing and improving overall rendering performance.</p>
+    </article>
+
+    <section id="installation">
+      <h2>Installation</h2>
+      <pre><code>npm i @uveee/chrono</code></pre>
+    </section>
+
+    <section id="api">
+      <h2>API Reference</h2>
+
+      <article>
+        <h3><code>Chrono.add(callback, priority)</code></h3>
+        <p>Adds a new callback to the rAF loop. Callbacks are executed in order of their priority (lower numbers run first).</p>
+        <h4>Parameters:</h4>
+        <dl>
+          <dt><code>callback</code></dt>
+          <dd>(Function) The function to be called every frame. This function receives <code>time</code> (DOMHighResTimeStamp) and <code>deltaTime</code> (milliseconds since last frame) as arguments.</dd>
+          <dt><code>priority</code></dt>
+          <dd>(Number, optional, default: 0) The priority of the callback. Lower numbers indicate higher priority.</dd>
+        </dl>
+        <h4>Returns:</h4>
+        <p>(Function) A function that, when called, will remove the callback from the loop (equivalent to calling <code>Chrono.remove(callback)</code>).</p>
+      </article>
+
+      <article>
+        <h3><code>Chrono.remove(callback)</code></h3>
+        <p>Removes a previously added callback from the rAF loop.</p>
+        <h4>Parameters:</h4>
+        <dl>
+          <dt><code>callback</code></dt>
+          <dd>(Function) The original callback function that was passed to <code>Chrono.add()</code>.</dd>
+        </dl>
+      </article>
+    </section>
+
+    <section id="usage">
+      <h2>Usage Examples</h2>
+
+      <article>
+        <h3>Basic Example</h3>
+        <pre><code>
+import Chrono from '@uveee/chrono'; // Or from '../src/index.js' if running locally from docs
+
+// Example 1: Basic console logging
+function myFrameLogger(time, deltaTime) {
+  console.log(`Frame time: ${time.toFixed(2)}, Delta: ${deltaTime.toFixed(2)}ms`);
+}
+
+Chrono.add(myFrameLogger, 10); // Add with priority 10
+
+// To stop it:
+// Chrono.remove(myFrameLogger); 
+// Or, if you stored the return value of add:
+// const unsubscribeLogger = Chrono.add(myFrameLogger, 10);
+// unsubscribeLogger();
+        </code></pre>
+      </article>
+
+      <article>
+        <h3>Priority Example</h3>
+        <pre><code>
+import Chrono from '@uveee/chrono';
+
+Chrono.add((time, deltaTime) => {
+  console.log("Callback 1 (Priority 0) - Runs First");
+}, 0);
+
+Chrono.add((time, deltaTime) => {
+  console.log("Callback 2 (Priority 5) - Runs After Callback 1");
+}, 5);
+        </code></pre>
+      </article>
+      
+      <article>
+        <h3>Updating the DOM</h3>
+        <p>HTML structure to be included in your page's <code>&lt;body&gt;</code>:</p>
+        <pre><code>
+&lt;div id="timerDisplay"&gt;&lt;/div&gt;
+&lt;div id="fpsDisplay"&gt;&lt;/div&gt;
+        </code></pre>
+        <p>JavaScript code:</p>
+        <pre><code>
+import Chrono from '@uveee/chrono';
+
+const timerDiv = document.getElementById('timerDisplay');
+const fpsDiv = document.getElementById('fpsDisplay');
+let lastTime = 0;
+
+function updateDOM(time, deltaTime) {
+  timerDiv.textContent = `Time: ${time.toFixed(2)}`;
+  if (deltaTime > 0) {
+    const fps = 1000 / deltaTime;
+    fpsDiv.textContent = `FPS: ${fps.toFixed(1)}`;
+  }
+}
+
+Chrono.add(updateDOM);
+
+// Note: For this example to run directly in a browser from the HTML file,
+// you'd need to adjust the import path for Chrono, e.g., 
+// import Chrono from '../dist/chrono.modern.mjs'; 
+// and ensure the HTML file has &lt;script type="module"&gt;.
+        </code></pre>
+      </article>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2024 Chrono.js Project</p>
+  </footer>
+
+</body>
 </html>
