@@ -3,6 +3,9 @@
 ## Description
 Chrono is a JavaScript library that allows you to merge all your `requestAnimationFrame` (rAF) loops into one for better performance and provides better control over their execution priority.
 
+## Documentation
+For more detailed API documentation, usage examples, and advanced scenarios, please see our [full documentation page](docs/index.html).
+
 ## Installation
 
 ```bash
