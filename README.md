@@ -56,3 +56,93 @@ Chrono.add((time, deltaTime) => {
 
 ### Support 
 If you find this project helpful, please consider giving it a star on GitHub!
+
+# @uveee/chrono
+
+A lightweight and efficient animation loop manager for browser-based applications.
+
+## Features
+
+- 🚀 High-performance animation loop management
+- ⚡ FPS limiting and control
+- 🎯 Priority-based callback execution
+- 🛡️ Error handling and recovery
+- 📊 FPS monitoring and statistics
+- 🎨 Easy to use API
+
+## Installation
+
+```bash
+npm install @uveee/chrono
+# or
+yarn add @uveee/chrono
+# or
+pnpm add @uveee/chrono
+```
+
+## Usage
+
+```typescript
+import { Chrono } from '@uveee/chrono';
+
+// Create a new instance
+const chrono = new Chrono({ maxFPS: 60 });
+
+// Add callbacks with priorities
+chrono.add((timestamp, deltaTime) => {
+  // Your animation code here
+  // timestamp: current time in milliseconds
+  // deltaTime: time since last frame in milliseconds
+}, 1); // Priority (lower numbers run first)
+
+// Start the animation loop
+chrono.start();
+
+// Stop the animation loop
+chrono.stop();
+```
+
+## Examples
+
+Check out the [examples](./examples) directory for more usage examples:
+
+- [Basic Example](./examples/basic): A simple animation with FPS control and monitoring
+
+To run the examples:
+
+```bash
+# Build the library
+pnpm build
+
+# Serve the example
+npx serve examples/basic
+```
+
+## API
+
+### Chrono
+
+The main class for managing animation loops.
+
+#### Constructor
+
+```typescript
+new Chrono(options?: ChronoOptions)
+```
+
+Options:
+- `maxFPS`: number (optional) - Maximum frames per second
+- `autoStart`: boolean (optional) - Whether to start the animation loop automatically
+
+#### Methods
+
+- `start()`: Starts the animation loop
+- `stop()`: Stops the animation loop
+- `add(callback, priority?)`: Adds a callback to the loop
+- `remove(callback)`: Removes a callback from the loop
+- `clear()`: Removes all callbacks
+- `getCallbacks()`: Returns the current list of callbacks
+
+## License
+
+MIT
