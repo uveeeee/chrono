@@ -1,65 +1,8 @@
-[![Chronos](public/header.png)](https://github.com/uvee-dev/chrono)
-
-## Description
-Chrono is a JavaScript library that allows you to merge all your `requestAnimationFrame` (rAF) loops into one for better performance and provides better control over their execution priority.
-
-## Documentation
-For more detailed API documentation, usage examples, and advanced scenarios, please see our [full documentation page](docs/index.html).
-
-## Installation
-
-```bash
-$ npm i @uveee/chrono
-```
-
-## Usage
-
-```javascript
-import Chrono from '@uveee/chrono'
-
-function onFrame(time, deltaTime) {
-  // Called every frame
-}
-
-// Subscribe
-const unsubscribe = Chrono.add(onFrame, 0);
-
-// Unsubscribe
-unsubscribe();
-// OR
-Chrono.remove(onFrame);
-```
-
-## Methods
-
-- `add(callback, priority)`
-
-Adds a new callback to the rAF loop.
-
-callback: Function to be called every frame.
-priority: Number indicating the priority of the callback. Lower numbers have higher priority.
-
-- `remove(callback)`
-
-Removes a callback from the rAF loop.
-
-## Examples
-
-### Basic Example
-```js
-import Chrono from '@uveee/chrono';
-
-Chrono.add((time, deltaTime) => {
-  console.log(`Time: ${time}, Delta Time: ${deltaTime}`);
-}, 0);
-```
-
-### Support 
-If you find this project helpful, please consider giving it a star on GitHub!
-
 # @uveee/chrono
 
-A lightweight and efficient animation loop manager for browser-based applications.
+[![Chronos](public/header.png)](https://github.com/uvee-dev/chrono)
+
+A lightweight and efficient animation loop manager for browser-based applications. It provides a simple way to manage multiple animation callbacks with priority control and FPS limiting.
 
 ## Features
 
@@ -80,69 +23,160 @@ yarn add @uveee/chrono
 pnpm add @uveee/chrono
 ```
 
-## Usage
+## Quick Start
 
 ```typescript
 import { Chrono } from '@uveee/chrono';
 
-// Create a new instance
-const chrono = new Chrono({ maxFPS: 60 });
+// Create a new instance with optional configuration
+const chrono = new Chrono({
+    maxFPS: 60,          // Maximum frames per second
+    autoStart: false,    // Don't start automatically
+    debug: true          // Enable debug mode
+});
 
-// Add callbacks with priorities
+// Add a callback with priority
 chrono.add((timestamp, deltaTime) => {
-  // Your animation code here
-  // timestamp: current time in milliseconds
-  // deltaTime: time since last frame in milliseconds
-}, 1); // Priority (lower numbers run first)
+    // Your animation code here
+    console.log(`Frame time: ${deltaTime}ms`);
+}, 1); // Priority level (higher = more important)
 
 // Start the animation loop
 chrono.start();
 
-// Stop the animation loop
+// Stop when needed
 chrono.stop();
 ```
 
-## Examples
+## API Reference
 
-Check out the [examples](./examples) directory for more usage examples:
+### Constructor Options
 
-- [Basic Example](./examples/basic): A simple animation with FPS control and monitoring
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| maxFPS | number | 60 | Maximum frames per second |
+| autoStart | boolean | false | Whether to start the loop automatically |
+| debug | boolean | false | Enable debug mode for performance monitoring |
 
-To run the examples:
+### Methods
 
-```bash
-# Build the library
-pnpm build
-
-# Serve the example
-npx serve examples/basic
-```
-
-## API
-
-### Chrono
-
-The main class for managing animation loops.
-
-#### Constructor
+#### `add(callback: Function, priority: number = 0): void`
+Adds a callback function to the animation loop. Higher priority callbacks are executed first.
 
 ```typescript
-new Chrono(options?: ChronoOptions)
+chrono.add((timestamp, deltaTime) => {
+    // Animation code
+}, 1);
 ```
 
-Options:
-- `maxFPS`: number (optional) - Maximum frames per second
-- `autoStart`: boolean (optional) - Whether to start the animation loop automatically
+#### `remove(callback: Function): void`
+Removes a callback from the animation loop.
 
-#### Methods
+```typescript
+const callback = (timestamp, deltaTime) => {
+    // Animation code
+};
+chrono.add(callback);
+chrono.remove(callback);
+```
 
-- `start()`: Starts the animation loop
-- `stop()`: Stops the animation loop
-- `add(callback, priority?)`: Adds a callback to the loop
-- `remove(callback)`: Removes a callback from the loop
-- `clear()`: Removes all callbacks
-- `getCallbacks()`: Returns the current list of callbacks
+#### `start(): void`
+Starts the animation loop.
+
+#### `stop(): void`
+Stops the animation loop.
+
+#### `getFPS(): number`
+Returns the current frames per second.
+
+#### `getFrameTime(): number`
+Returns the time taken to render the last frame in milliseconds.
+
+### Callback Parameters
+
+Each callback receives two parameters:
+
+1. `timestamp`: The current timestamp in milliseconds
+2. `deltaTime`: The time elapsed since the last frame in milliseconds
+
+## Examples
+
+### Basic Animation
+
+```typescript
+import { Chrono } from '@uveee/chrono';
+
+const canvas = document.createElement('canvas');
+const ctx = canvas.getContext('2d');
+document.body.appendChild(canvas);
+
+const chrono = new Chrono({ maxFPS: 60 });
+
+let x = 0;
+chrono.add((timestamp, deltaTime) => {
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Update position
+    x += deltaTime * 0.1;
+    if (x > canvas.width) x = 0;
+    
+    // Draw circle
+    ctx.beginPath();
+    ctx.arc(x, canvas.height / 2, 20, 0, Math.PI * 2);
+    ctx.fillStyle = '#FF6B35';
+    ctx.fill();
+});
+
+chrono.start();
+```
+
+### Multiple Animations with Priorities
+
+```typescript
+import { Chrono } from '@uveee/chrono';
+
+const chrono = new Chrono();
+
+// Background animation (low priority)
+chrono.add((timestamp, deltaTime) => {
+    document.body.style.background = `hsl(${timestamp / 20}, 50%, 50%)`;
+}, 0);
+
+// Main animation (high priority)
+chrono.add((timestamp, deltaTime) => {
+    // Your main animation code
+}, 1);
+```
+
+### FPS Monitoring
+
+```typescript
+import { Chrono } from '@uveee/chrono';
+
+const chrono = new Chrono({ debug: true });
+
+// Update FPS display
+chrono.add((timestamp, deltaTime) => {
+    const fps = chrono.getFPS();
+    const frameTime = chrono.getFrameTime();
+    
+    console.log(`FPS: ${fps.toFixed(1)}`);
+    console.log(`Frame time: ${frameTime.toFixed(2)}ms`);
+});
+```
+
+## Performance Tips
+
+1. **Use Priorities Wisely**: Assign higher priorities to critical animations and lower priorities to background effects.
+2. **Monitor FPS**: Enable debug mode to monitor performance and adjust accordingly.
+3. **Clean Up**: Always remove callbacks when they're no longer needed to prevent memory leaks.
+4. **Optimize Callbacks**: Keep callback functions as lightweight as possible.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-MIT
+MIT © [uvee-dev](https://github.com/uvee-dev)

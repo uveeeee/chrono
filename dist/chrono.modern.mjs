@@ -1,2 +1,0 @@
-const t="undefined"!=typeof window?new class{constructor(){this.callbacks=[],this.now=performance.now(),this.raf=this.raf.bind(this),requestAnimationFrame(this.raf)}add(t,a=0){return this.callbacks.push({callback:t,priority:a}),this.callbacks.sort((t,a)=>t.priority-a.priority),()=>this.remove(t)}remove(t){this.callbacks=this.callbacks.filter(({callback:a})=>t!==a)}raf(t){requestAnimationFrame(this.raf);const a=t-this.now;this.now=t;for(const{callback:s}of this.callbacks)s(t,a)}}:null;export{t as default};
-//# sourceMappingURL=chrono.modern.mjs.map
